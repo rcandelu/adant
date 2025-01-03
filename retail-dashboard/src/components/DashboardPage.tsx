@@ -22,7 +22,7 @@ interface RetailEvent {
   data: string;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://ec2-3-79-180-85.eu-central-1.compute.amazonaws.com/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://ec2-3-79-180-85.eu-central-1.compute.amazonaws.com';
 
 const FETCH_INTERVAL = 5 * 60 * 1000; // 5 minuti
 
