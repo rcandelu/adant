@@ -263,7 +263,7 @@ const RetailDashboard: React.FC<RetailDashboardProps> = ({ data = [] }) => {
               disabled={loadingAI}
               sx={{ width: 200, height: 50 }}
             >
-              {loadingAI ? 'Analisi in corso...' : 'AI Analysis'}
+              {loadingAI ? 'Analysis in progress...' : 'AI Analysis'}
             </Button>
           </Box>
   
