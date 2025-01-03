@@ -184,7 +184,7 @@ const RetailDashboard: React.FC<RetailDashboardProps> = ({ data = [] }) => {
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                   <div>
                     <Typography color="textSecondary" variant="subtitle2">
-                      Movimenti Totali
+                      Total Movements
                     </Typography>
                     <Typography variant="h4">{kpis.totalMovements}</Typography>
                   </div>
@@ -202,7 +202,7 @@ const RetailDashboard: React.FC<RetailDashboardProps> = ({ data = [] }) => {
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                   <div>
                     <Typography color="textSecondary" variant="subtitle2">
-                      Categorie Uniche
+                      Unique Category
                     </Typography>
                     <Typography variant="h4">{kpis.uniqueCategories}</Typography>
                   </div>
@@ -220,7 +220,7 @@ const RetailDashboard: React.FC<RetailDashboardProps> = ({ data = [] }) => {
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                   <div>
                     <Typography color="textSecondary" variant="subtitle2">
-                      Operatori Attivi
+                      Active Operators
                     </Typography>
                     <Typography variant="h4">{kpis.activeOperators}</Typography>
                   </div>
@@ -238,7 +238,7 @@ const RetailDashboard: React.FC<RetailDashboardProps> = ({ data = [] }) => {
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                   <div>
                     <Typography color="textSecondary" variant="subtitle2">
-                      Tasso Conversione
+                      Conversion Rate
                     </Typography>
                     <Typography variant="h4">
                       {((kpis.operationStats.find(op => op.name === "Rimozione")?.count || 0) / kpis.totalMovements * 100).toFixed(1)}%
@@ -276,7 +276,7 @@ const RetailDashboard: React.FC<RetailDashboardProps> = ({ data = [] }) => {
           {aiResponse.length > 0 && (
             <Paper elevation={3} sx={{ p: 3, mt: 2, backgroundColor: '#f8f8f8' }}>
               <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
-                Risultato AI Analysis:
+                AI Analysis:
               </Typography>
               <Box
                 sx={{
@@ -302,7 +302,7 @@ const RetailDashboard: React.FC<RetailDashboardProps> = ({ data = [] }) => {
         <Grid item xs={12} md={6}>
           <Paper elevation={2} sx={{ p: 2 }}>
             <Typography variant="h6" gutterBottom>
-              Top 5 Categorie
+              Top 5 Category
             </Typography>
             <Box height={300}>
               <ResponsiveContainer width="100%" height="100%">
@@ -320,7 +320,7 @@ const RetailDashboard: React.FC<RetailDashboardProps> = ({ data = [] }) => {
         <Grid item xs={12} md={6}>
           <Paper elevation={2} sx={{ p: 2 }}>
             <Typography variant="h6" gutterBottom>
-              Distribuzione Operazioni
+              Distribution Operations
             </Typography>
             <Box height={300}>
               <ResponsiveContainer width="100%" height="100%">
@@ -348,7 +348,7 @@ const RetailDashboard: React.FC<RetailDashboardProps> = ({ data = [] }) => {
         <Grid item xs={12}>
           <Paper elevation={2} sx={{ p: 2 }}>
             <Typography variant="h6" gutterBottom>
-              Analisi Flusso Prodotti
+              Product Flow Analysis
             </Typography>
             <Grid container spacing={3} sx={{ mb: 3 }}>
               <Grid item xs={12} md={4}>
@@ -357,7 +357,7 @@ const RetailDashboard: React.FC<RetailDashboardProps> = ({ data = [] }) => {
                     <Box display="flex" justifyContent="space-between" alignItems="center">
                       <div>
                         <Typography color="textSecondary" gutterBottom>
-                          Prodotti in Checkout
+                          Checkout Products
                         </Typography>
                         <Typography variant="h4">
                           {kpis.flowAnalysis.checkout.items}
@@ -380,7 +380,7 @@ const RetailDashboard: React.FC<RetailDashboardProps> = ({ data = [] }) => {
                     <Box display="flex" justifyContent="space-between" alignItems="center">
                       <div>
                         <Typography color="textSecondary" gutterBottom>
-                          Prodotti in Fitting Room
+                          Fitting Room Products
                         </Typography>
                         <Typography variant="h4">
                           {kpis.flowAnalysis.fittingRoom.items}
@@ -403,7 +403,7 @@ const RetailDashboard: React.FC<RetailDashboardProps> = ({ data = [] }) => {
                     <Box display="flex" justifyContent="space-between" alignItems="center">
                       <div>
                         <Typography color="textSecondary" gutterBottom>
-                          Conversione Fitting Room → Checkout
+                          Conversion Fitting Room → Checkout
                         </Typography>
                         <Typography variant="h4">
                           {kpis.fittingRoomToCheckout}
@@ -454,7 +454,7 @@ const RetailDashboard: React.FC<RetailDashboardProps> = ({ data = [] }) => {
         <Grid item xs={12}>
           <Paper elevation={2} sx={{ p: 2 }}>
             <Typography variant="h6" gutterBottom>
-              Dettagli Operativi
+              Operational Details
             </Typography>
             <Grid container spacing={2}>
               {kpis.operationStats.map((op, index) => (
