@@ -1,0 +1,139 @@
+openapi: 3.0.3
+info:
+  title: Enriched Events API
+  version: 1.0.0
+  description: API per ottenere eventi arricchiti da diverse fonti dati
+servers:
+  - url: http://localhost:3025
+    description: Local development server
+paths:
+  /api/enriched_events:
+    get:
+      summary: Restituisce un elenco di eventi arricchiti
+      description: |
+        Ritorna un array di eventi arricchiti unendo dati da `/event_rfid/`, `/rack/`, `/operator/`, `/warehouse/` e `/tag_rfid/`.
+        È possibile filtrare gli eventi per data (giorno) o per intervallo di date/ore.
+      parameters:
+        - in: query
+          name: date
+          schema:
+            type: string
+            format: date
+          description: Filtra gli eventi per una singola giornata (formato YYYY-MM-DD)
+        - in: query
+          name: start
+          schema:
+            type: string
+            format: date-time
+          description: Timestamp di inizio intervallo (ISO 8601)
+        - in: query
+          name: end
+          schema:
+            type: string
+            format: date-time
+          description: Timestamp di fine intervallo (ISO 8601)
+      responses:
+        '200':
+          description: Lista di eventi arricchiti
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    tag_rfid:
+                      type: string
+                      example: "1191 A503 0067 13D3 1602"
+                    categoria:
+                      type: string
+                      example: "Adant Polo Blue"
+                    tipo:
+                      type: string
+                      example: "Inserimento"
+                    operatore:
+                      type: string
+                      example: "NoOperatore"
+                    rack:
+                      type: string
+                      example: "OnSale"
+                    magazzino:
+                      type: string
+                      example: "SmartRoom"
+                    data:
+                      type: string
+                      example: "08/11/2024 14:45:33"
+        '400':
+          description: Parametri non validi
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Formato data non valido. Usa YYYY-MM-DD."
+        '502':
+          description: Errore nel recupero dei dati dagli endpoint esterni
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Impossibile recuperare i dati da uno o più servizi esterni."
+  /api/enriched_events/latest:
+    get:
+      tags:
+        - events
+      summary: Recupera gli ultimi 60 eventi
+      description: Restituisce gli ultimi 60 eventi RFID arricchiti con informazioni su rack, operatore e magazzino, ordinati per data decrescente
+      responses:
+        '200':
+          description: Lista degli ultimi 60 eventi arricchiti
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    tag_rfid:
+                      type: string
+                      description: Identificativo RFID del tag
+                      example: "EBE1 C05E 2780 0000 00E5"
+                    categoria:
+                      type: string
+                      description: Categoria del prodotto
+                      example: "Diesel Pantaloni Neri"
+                    tipo:
+                      type: string
+                      description: Tipo di evento (Inserimento/Spostamento/Rimozione)
+                      example: "Rimozione"
+                    operatore:
+                      type: string
+                      description: Nome dell'operatore
+                      example: "Gianvito"
+                    rack:
+                      type: string
+                      description: Nome del rack
+                      example: "Checkout"
+                    magazzino:
+                      type: string
+                      description: Nome del magazzino
+                      example: "SmartRoom"
+                    data:
+                      type: string
+                      description: Data e ora dell'evento
+                      example: "17/12/2024 11:58:03"
+        '502':
+          description: Errore nel recupero dei dati dai servizi esterni
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Impossibile recuperare i dati da uno o più servizi esterni."
