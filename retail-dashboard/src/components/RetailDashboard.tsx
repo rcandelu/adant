@@ -131,7 +131,7 @@ const RetailDashboard: React.FC<RetailDashboardProps> = ({ data = [] }) => {
     setLoadingAI(true);
     setAiResponse([]);
     const client = new FlowiseClient({ baseUrl: 'http://localhost:3000' });
-    const chatflowId = 'f6f19bff-ea41-4254-9f8a-dd160360cc5b'; // ID del tuo flusso AI
+    const chatflowId = '2dad2323-ff8f-41a8-b701-ff8236b77230'; // ID del tuo flusso AI
 
     try {
       const jsonPayload = JSON.stringify(data);
