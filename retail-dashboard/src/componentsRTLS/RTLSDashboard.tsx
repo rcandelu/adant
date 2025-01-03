@@ -32,15 +32,10 @@ import {
   Cell,
   CartesianGrid
 } from 'recharts';
-import _ from 'lodash';
 
-/**
- * Se vuoi usare flowise-sdk, puoi farlo come nel tuo esempio:
- *
- * import { FlowiseClient } from 'flowise-sdk';
- *
- * Oppure puoi fare un fetch manuale.
- */
+// 1) Importa FlowiseClient
+import { FlowiseClient } from 'flowise-sdk';
+import _ from 'lodash';
 
 interface RtlEvent {
   MAC: string;
@@ -55,8 +50,11 @@ interface RTLSDashboardProps {
   data: RtlEvent[];
 }
 
-// Endpoint AI Analysis (Flowise)
-const AI_ENDPOINT = 'http://ec2-3-79-180-85.eu-central-1.compute.amazonaws.com/api/v1/prediction/f611e292-3cc6-4c55-ba83-8b06078dcdcd';
+// Se vuoi cambiare ID del ChatFlow, fallo qui
+const CHATFLOW_ID = 'f611e292-3cc6-4c55-ba83-8b06078dcdcd';
+
+// Base URL del server Flowise
+const FLOWISE_BASE_URL = 'http://ec2-3-79-180-85.eu-central-1.compute.amazonaws.com';
 
 const RTLSDashboard: React.FC<RTLSDashboardProps> = ({ data = [] }) => {
   const theme = useTheme();
@@ -65,36 +63,27 @@ const RTLSDashboard: React.FC<RTLSDashboardProps> = ({ data = [] }) => {
   const [loadingAI, setLoadingAI] = useState(false);
   const [aiResponse, setAiResponse] = useState<string[]>([]);
 
-  // Esempio di KPI
-  // - conteggio di quanti "In" e "Out"
-  // - top Zone
-  // - etc.
-
+  // Calcolo KPI base
   const kpis = useMemo(() => {
-    // Conta quanti record totali
     const totalEvents = data.length;
-
-    // Raggruppa per Direction: In / Out
     const directionGroup = _.groupBy(data, 'Direction');
-    const totalIn  = directionGroup['In']?.length || 0;
+    const totalIn = directionGroup['In']?.length || 0;
     const totalOut = directionGroup['Out']?.length || 0;
 
-    // Raggruppa per Zone
+    // Zone
     const zoneGroup = _.groupBy(data, 'Zone');
     const zoneStats = Object.entries(zoneGroup).map(([zone, items]) => ({
       zone,
-      count: items.length
+      count: items.length,
     }));
-    // Ordina discendente
     zoneStats.sort((a, b) => b.count - a.count);
 
-    // Raggruppa per Warehouse
+    // Warehouse
     const whGroup = _.groupBy(data, 'Warehouse');
     const warehouseStats = Object.entries(whGroup).map(([wh, items]) => ({
       warehouse: wh,
-      count: items.length
+      count: items.length,
     }));
-    // Ordina discendente
     warehouseStats.sort((a, b) => b.count - a.count);
 
     return {
@@ -106,48 +95,41 @@ const RTLSDashboard: React.FC<RTLSDashboardProps> = ({ data = [] }) => {
     };
   }, [data]);
 
-  // Esempio di AI Analysis su Flowise
+  // Funzione AI Analysis con STREAMING
   const handleAIAnalysis = async () => {
-    setLoadingAI(true);
-    setAiResponse([]);
-
     try {
-      // 1) Prepara il JSON dei tuoi dati da passare all'endpoint
+      setLoadingAI(true);
+      setAiResponse([]);
+
+      // Inizializza il client
+      const client = new FlowiseClient({ baseUrl: FLOWISE_BASE_URL });
       const jsonPayload = JSON.stringify(data);
 
-      // 2) Chiamata al Flowise backend
-      //    A) con la flowise-sdk (come nel tuo esempio)
-      //       Oppure B) un fetch / streaming manuale
-
-      // Esempio "fetch" sincrono (no streaming):
-      const response = await fetch(AI_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          question: jsonPayload  // se il Flow di Flowise si aspetta "question"
-        }),
+      // Crea una "prediction" in streaming
+      const prediction = await client.createPrediction({
+        chatflowId: CHATFLOW_ID,
+        question: jsonPayload,
+        streaming: true,
       });
-      if (!response.ok) {
-        throw new Error(`Errore AI: status ${response.status}`);
+
+      let fullResponse = '';
+      // Legge i chunk man mano che arrivano
+      for await (const chunk of prediction) {
+        // Verifica l'evento "token" e concatena i dati
+        if (chunk.event === 'token' && chunk.data) {
+          fullResponse += chunk.data;
+          setAiResponse([fullResponse]);
+        }
       }
-
-      const result = await response.json();
-      console.log('Risultato AI:', result);
-
-      // A seconda di come Flowise restituisce i dati, adatta la logica di parsing.
-      // Qui supponiamo che `result.answer` contenga l’output testuale
-      setAiResponse([result.answer ?? 'No answer field found']);
     } catch (error) {
-      console.error('Errore durante AI Analysis:', error);
+      console.error('Errore AI:', error);
       setAiResponse(["Errore durante l'analisi AI."]);
     } finally {
       setLoadingAI(false);
     }
   };
 
-  // Tooltip personalizzato per i grafici
+  // Tooltip personalizzato
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
@@ -164,18 +146,17 @@ const RTLSDashboard: React.FC<RTLSDashboardProps> = ({ data = [] }) => {
     return null;
   };
 
-  // Colori di base
+  // Colori
   const COLORS = [
     theme.palette.primary.main,
     theme.palette.secondary.main,
     theme.palette.success.main,
-    theme.palette.error.main
+    theme.palette.error.main,
   ];
 
   return (
     <Container maxWidth="xl">
       <Grid container spacing={3}>
-
         {/* KPI Cards */}
         <Grid container item spacing={3}>
           {/* Totali */}
@@ -196,6 +177,7 @@ const RTLSDashboard: React.FC<RTLSDashboardProps> = ({ data = [] }) => {
               </CardContent>
             </Card>
           </Grid>
+
           {/* Totali In */}
           <Grid item xs={12} md={3}>
             <Card>
@@ -207,6 +189,7 @@ const RTLSDashboard: React.FC<RTLSDashboardProps> = ({ data = [] }) => {
               </CardContent>
             </Card>
           </Grid>
+
           {/* Totali Out */}
           <Grid item xs={12} md={3}>
             <Card>
@@ -265,7 +248,7 @@ const RTLSDashboard: React.FC<RTLSDashboardProps> = ({ data = [] }) => {
           )}
         </Grid>
 
-        {/* Distribuzione In/Out (Pie o Bar) */}
+        {/* Distribuzione In/Out (Pie Chart) */}
         <Grid item xs={12} md={6}>
           <Paper elevation={2} sx={{ p: 2 }}>
             <Typography variant="h6" gutterBottom>
@@ -277,7 +260,7 @@ const RTLSDashboard: React.FC<RTLSDashboardProps> = ({ data = [] }) => {
                   <Pie
                     data={[
                       { name: 'In', value: kpis.totalIn },
-                      { name: 'Out', value: kpis.totalOut }
+                      { name: 'Out', value: kpis.totalOut },
                     ]}
                     dataKey="value"
                     nameKey="name"
@@ -296,7 +279,7 @@ const RTLSDashboard: React.FC<RTLSDashboardProps> = ({ data = [] }) => {
           </Paper>
         </Grid>
 
-        {/* Top Zone */}
+        {/* Top 5 Zones */}
         <Grid item xs={12} md={6}>
           <Paper elevation={2} sx={{ p: 2 }}>
             <Typography variant="h6" gutterBottom>
@@ -304,7 +287,7 @@ const RTLSDashboard: React.FC<RTLSDashboardProps> = ({ data = [] }) => {
             </Typography>
             <Box height={300}>
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={kpis.zoneStats.slice(0,5)} layout="vertical">
+                <BarChart data={kpis.zoneStats.slice(0, 5)} layout="vertical">
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis type="number" />
                   <YAxis dataKey="zone" type="category" width={150} />
@@ -337,7 +320,6 @@ const RTLSDashboard: React.FC<RTLSDashboardProps> = ({ data = [] }) => {
             </Box>
           </Paper>
         </Grid>
-
       </Grid>
     </Container>
   );
