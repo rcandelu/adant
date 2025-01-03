@@ -1,0 +1,168 @@
+openapi: 3.0.0
+info:
+  title: API per Enriched Area Events
+  description: API per la gestione degli eventi arricchiti provenienti dal sistema
+  version: 1.0.0
+
+servers:
+  - url: https://point-demo.adant.com/api/v0
+    description: Server di produzione
+
+paths:
+  /api/enriched_area_events:
+    get:
+      summary: Recupera eventi arricchiti
+      description: Restituisce gli eventi arricchiti basati su parametri di data, inizio e fine.
+      parameters:
+        - name: date
+          in: query
+          description: Data specifica per filtrare gli eventi.
+          required: false
+          schema:
+            type: string
+            format: date
+            example: "2025-01-01"
+        - name: start
+          in: query
+          description: Data di inizio per filtrare gli eventi.
+          required: false
+          schema:
+            type: string
+            format: date-time
+            example: "2025-01-01T00:00:00Z"
+        - name: end
+          in: query
+          description: Data di fine per filtrare gli eventi.
+          required: false
+          schema:
+            type: string
+            format: date-time
+            example: "2025-01-02T00:00:00Z"
+      responses:
+        '200':
+          description: Risultato con gli eventi arricchiti
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    tag_rfid:
+                      type: string
+                      example: "123456789"
+                    categoria:
+                      type: string
+                      example: "Electronics"
+                    tipo:
+                      type: string
+                      example: "Inserimento"
+                    operatore:
+                      type: string
+                      example: "Operatore A"
+                    warehouse_area:
+                      type: string
+                      example: "Magazzino 1"
+                    magazzino:
+                      type: string
+                      example: "Magazzino ABC"
+                    data:
+                      type: string
+                      format: date-time
+                      example: "2025-01-01T12:00:00Z"
+        '400':
+          description: Parametro di data non valido
+        '502':
+          description: Errore durante il recupero dei dati
+
+  /api/enriched_area_events/today:
+    get:
+      summary: Recupera gli eventi di oggi
+      description: Restituisce gli eventi arricchiti per la giornata odierna.
+      responses:
+        '200':
+          description: Risultato con gli eventi arricchiti di oggi
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EnrichedEvent'
+        '502':
+          description: Errore durante il recupero dei dati
+
+  /api/enriched_area_events/yesterday:
+    get:
+      summary: Recupera gli eventi di ieri
+      description: Restituisce gli eventi arricchiti per la giornata di ieri.
+      responses:
+        '200':
+          description: Risultato con gli eventi arricchiti di ieri
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EnrichedEvent'
+        '502':
+          description: Errore durante il recupero dei dati
+
+  /api/enriched_area_events/weekly:
+    get:
+      summary: Recupera gli eventi degli ultimi 7 giorni
+      description: Restituisce gli eventi arricchiti degli ultimi 7 giorni.
+      responses:
+        '200':
+          description: Risultato con gli eventi settimanali arricchiti
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EnrichedEvent'
+        '502':
+          description: Errore durante il recupero dei dati
+
+  /api/enriched_area_events/latest:
+    get:
+      summary: Recupera gli ultimi 60 eventi
+      description: Restituisce i 60 eventi più recenti arricchiti.
+      responses:
+        '200':
+          description: Risultato con gli ultimi 60 eventi arricchiti
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EnrichedEvent'
+        '502':
+          description: Errore durante il recupero dei dati
+
+components:
+  schemas:
+    EnrichedEvent:
+      type: object
+      properties:
+        tag_rfid:
+          type: string
+          example: "123456789"
+        categoria:
+          type: string
+          example: "Electronics"
+        tipo:
+          type: string
+          example: "Inserimento"
+        operatore:
+          type: string
+          example: "Operatore A"
+        warehouse_area:
+          type: string
+          example: "Magazzino 1"
+        magazzino:
+          type: string
+          example: "Magazzino ABC"
+        data:
+          type: string
+          format: date-time
+          example: "2025-01-01T12:00:00Z"
