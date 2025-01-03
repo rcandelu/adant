@@ -130,7 +130,7 @@ const RetailDashboard: React.FC<RetailDashboardProps> = ({ data = [] }) => {
   const handleAIAnalysis = async () => {
     setLoadingAI(true);
     setAiResponse([]);
-    const client = new FlowiseClient({ baseUrl: 'http://localhost:3000' });
+    const client = new FlowiseClient({ baseUrl: 'http://ec2-3-79-180-85.eu-central-1.compute.amazonaws.com' });
     const chatflowId = '2dad2323-ff8f-41a8-b701-ff8236b77230'; // ID del tuo flusso AI
 
     try {
