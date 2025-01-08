@@ -363,7 +363,7 @@ const RetailDashboard: React.FC<RetailDashboardProps> = ({ data = [] }) => {
                           {kpis.flowAnalysis.checkout.items}
                         </Typography>
                         <Typography variant="body2" color="textSecondary">
-                          {kpis.flowAnalysis.checkout.total} movimenti totali
+                          {kpis.flowAnalysis.checkout.total} Total Movements
                         </Typography>
                       </div>
                       <IconButton>
@@ -386,7 +386,7 @@ const RetailDashboard: React.FC<RetailDashboardProps> = ({ data = [] }) => {
                           {kpis.flowAnalysis.fittingRoom.items}
                         </Typography>
                         <Typography variant="body2" color="textSecondary">
-                          {kpis.flowAnalysis.fittingRoom.total} movimenti totali
+                          {kpis.flowAnalysis.fittingRoom.total} Total Movements
                         </Typography>
                       </div>
                       <IconButton>
@@ -409,7 +409,7 @@ const RetailDashboard: React.FC<RetailDashboardProps> = ({ data = [] }) => {
                           {kpis.fittingRoomToCheckout}
                         </Typography>
                         <Typography variant="body2" color="textSecondary">
-                          {((kpis.fittingRoomToCheckout / kpis.flowAnalysis.fittingRoom.items) * 100).toFixed(1)}% tasso di conversione
+                          {((kpis.fittingRoomToCheckout / kpis.flowAnalysis.fittingRoom.items) * 100).toFixed(1)}% Conversion Rate
                         </Typography>
                       </div>
                       <IconButton>
@@ -442,8 +442,8 @@ const RetailDashboard: React.FC<RetailDashboardProps> = ({ data = [] }) => {
                   <YAxis />
                   <Tooltip content={<CustomTooltip />} />
                   <Legend />
-                  <Bar dataKey="movimenti" fill={theme.palette.primary.main} name="Movimenti Totali" />
-                  <Bar dataKey="prodottiUnici" fill={theme.palette.secondary.main} name="Prodotti Unici" />
+                  <Bar dataKey="movimenti" fill={theme.palette.primary.main} name="Total Movements" />
+                  <Bar dataKey="prodottiUnici" fill={theme.palette.secondary.main} name="Unique Products" />
                 </BarChart>
               </ResponsiveContainer>
             </Box>
@@ -468,7 +468,7 @@ const RetailDashboard: React.FC<RetailDashboardProps> = ({ data = [] }) => {
                         {op.count}
                       </Typography>
                       <Typography variant="body2" color="textSecondary">
-                        {op.percentage.toFixed(1)}% del totale
+                        {op.percentage.toFixed(1)}% of total
                       </Typography>
                     </CardContent>
                   </Card>
