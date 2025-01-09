@@ -37,8 +37,8 @@ function formatDate(isoString) {
 function translateType(type) {
   const map = {
     insert: "Insert",
-    movement: "Movement",
-    missed: "Remove"
+    movement: "Moving"
+   // missed: "Remove"
   };
   return map[type] || type;
 }
